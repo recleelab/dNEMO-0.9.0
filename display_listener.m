@@ -51,16 +51,18 @@ switch hand
 	%
 	
 	case APP.remove_signals_button
-		curr_string = APP.remove_signals_button.String
+		curr_string = APP.remove_signals_button.String;
 		curr_state = strcmp(curr_string,'Remove Signals');
 		if curr_state
 			% beginning exclusion, set to 'Stop Removing Signals'
 			APP.remove_signals_button.String = 'Stop Removing Signals';
+            APP.removal_kf_button.Enable = 'on';
 			master_listener(APP,'exclude',1);
 			display_call(hand,evt,APP);
 		else
 			% finishing exclusion, set to 'Remove Signals'
 			APP.remove_signals_button.String = 'Remove Signals';
+            APP.removal_kf_button.Enable = 'off';
 			master_listener(APP,'exclude',2);
 			display_call(hand,evt,APP);
 		end

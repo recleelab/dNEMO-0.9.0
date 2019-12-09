@@ -78,7 +78,7 @@ classdef TMP_CELL
         end
         
         % removePolygonKF
-        function [] = removePolygonKF(obj, keyframing_string)
+        function obj = removePolygonKF(obj, keyframing_string)
             
             str_tokens = strsplit(keyframing_string,'_');
             frame_string = str_tokens{1};
@@ -91,19 +91,41 @@ classdef TMP_CELL
             
             poly_marker = pseudo_adj_matrix(1,frame_no);
             kf_frames = find(pseudo_adj_matrix(1,:)==poly_marker);
+            % assignin('base','kf_frames',kf_frames);
             pseudo_adj_matrix(2,frame_no) = 0;
             next_kf = find(pseudo_adj_matrix(2,frame_no+1:end));
             prev_kf = find(pseudo_adj_matrix(2,1:frame_no));
             
+            % assignin('base','next_kf',next_kf);
+            % assignin('base','prev_kf',prev_kf);
+            
             if isempty(prev_kf)
                 % go to next_kf
-                new_poly = actual_polygon_paths{next_kf(1)};
-                actual_polygon_paths{kf_frames} = new_poly;
+                % disp('no prev kf');
+                new_poly = actual_polygon_paths{next_kf(1)+frame_no};
+                actual_polygon_paths(1:next_kf(1)+frame_no) = {new_poly};
+                % pseudo_adj_matrix(1,1:frame_no) = pseudo_adj_matrix(1,next_kf(1));
+                pseudo_adj_matrix(1,1:next_kf(1)+frame_no) = 1;
             else
-                % use previous keyframe data
+                % disp('found prev kf');
+                new_poly = actual_polygon_paths{prev_kf(end)};
+                actual_polygon_paths(kf_frames) = {new_poly};
+                pseudo_adj_matrix(1,kf_frames) = pseudo_adj_matrix(1,prev_kf(end));
             end
             
+            % assignin('base','some_mat1',pseudo_adj_matrix);
+            % assignin('base','some_cell1',actual_polygon_paths);
+            
+            obj.pseudoAdjMatrix = pseudo_adj_matrix;
+            obj.polygons = actual_polygon_paths;
+            
         end
+        
+        % checkNumKF
+        function num_kf = checkNumKF(obj)
+            num_kf = length(find(obj.pseudoAdjMatrix(2,:)));
+        end
+        
     end
 end
 

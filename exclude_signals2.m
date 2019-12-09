@@ -26,9 +26,33 @@ set(APP.ax2,'ButtonDownFcn',{@grab_axis_points,APP});
 % pull all scatter children and assign them the same function
 scatter_children = findobj(allchild(APP.ax2),'type','scatter');
 for ii=1:length(scatter_children)
-    disp('assigninig exclusion callback to scatter objects');
     scatter_children(ii).ButtonDownFcn = {@grab_axis_points,APP};
 end
+
+% display call may have changed frame, check structure
+spot_detect = getappdata(APP.MAIN,'spot_detect');
+exclusion_tmp_struct = getappdata(APP.MAIN,'exclusion_tmp_struct');
+if isempty(exclusion_tmp_struct)
+    exclusion_tmp_struct = struct;
+    exclusion_tmp_struct.frameNo = APP.film_slider.Value;
+    curr_excl = spot_detect.featureExclusion{APP.film_slider.Value};
+    exclusion_tmp_struct.featureExclusion = curr_excl;
+    man_excl = spot_detect.manualExclusion{APP.film_slider.Value};
+    exclusion_tmp_struct.manualExclusion = man_excl;
+else
+    % check frame number
+    curr_no = exclusion_tmp_struct.frameNo;
+    if curr_no == APP.film_slider.Value
+        %do nothing
+    else
+        exclusion_tmp_struct.frameNo = APP.film_slider.Value;
+        curr_excl = spot_detect.featureExclusion{APP.film_slider.Value};
+        exclusion_tmp_struct.featureExclusion = curr_excl;
+        man_excl = spot_detect.manualExclusion{APP.film_slider.Value};
+        exclusion_tmp_struct.manualExclusion = man_excl;
+    end
+end
+setappdata(APP.MAIN,'exclusion_tmp_struct',exclusion_tmp_struct);
 
 %
 %%%
@@ -197,13 +221,20 @@ KEYFRAMES{1} = KF;
 setappdata(APP.MAIN,'KEYFRAMES',KEYFRAMES);
 %}
 
-spot_detect = getappdata(APP.MAIN,'spot_detect');
-frame_no = APP.film_slider.Value;
-spot_detect.manualExclusion{frame_no} = incl_excl_arr;
-setappdata(APP.MAIN,'spot_detect',spot_detect);
+% spot_detect = getappdata(APP.MAIN,'spot_detect');
+% frame_no = APP.film_slider.Value;
+% spot_detect.manualExclusion{frame_no} = incl_excl_arr;
+% setappdata(APP.MAIN,'spot_detect',spot_detect);
+
+exclusion_tmp_struct = getappdata(APP.MAIN,'exclusion_tmp_struct');
+exclusion_tmp_struct.manualExclusion = incl_excl_arr;
+new_logic_arr = exclusion_tmp_struct.featureExclusion;
+new_logic_arr(incl_excl_arr) = 1;
+setappdata(APP.MAIN,'exclusion_tmp_struct',exclusion_tmp_struct);
 
 overlay = getappdata(APP.MAIN,'OVERLAY');
-overlay.spotDetectKFExcl = logical(spot_detect.getExclusionLogicArray(frame_no));
+% overlay.spotDetectKFExcl = logical(spot_detect.getExclusionLogicArray(frame_no));
+overlay.spotDetectKFExcl = new_logic_arr;
 setappdata(APP.MAIN,'OVERLAY',overlay);
 
 % disp('exclude mechanics completed');
@@ -243,7 +274,7 @@ curr_incl_excl = KF.incl_excl{frame_no};
 spot_detect = getappdata(APP.MAIN,'spot_detect');
 frame_no = APP.film_slider.Value;
 curr_spotInfo = spot_detect.spotInfoArr{frame_no};
-curr_incl_excl = spot_detect.getManualExclusions(frame_no);
+% curr_incl_excl = spot_detect.getManualExclusions(frame_no);
 
 % starting point
 tmp_ind = 1:size(curr_spotInfo.objCoords,1);
@@ -260,12 +291,12 @@ if toggles(1,1)
     else
         displayed_centroids = frame_centroids;
     end
-elseif toggles(1,2)
+elseif toggles(2,1)
 	% signals in cells only being displayed, either all cells or specific cell
 	cell_signals = getappdata(APP.MAIN,'cell_signals');
 	if values(3,1) > 0
 		% consider specific cell
-		curr_signals = cell_signals{values(3,1),curr_kf_no};
+		curr_signals = cell_signals{values(3,1),1};
 		tmp_logic_arr = curr_signals{frame_no};
 		if ~isempty(tmp_logic_arr)
 			displayed_centroids = frame_centroids(tmp_logic_arr,:);
@@ -274,9 +305,9 @@ elseif toggles(1,2)
 		end
 	else
 		% consider all cells
-		tmp_logic_arr = zeros(size(frame_centroids,1),1);
+		tmp_logic_arr = logical(zeros(size(frame_centroids,1),1));
         for cell_idx=1:size(cell_signals,1)
-            curr_signals = cell_signals{cell_idx,curr_kf_no};
+            curr_signals = cell_signals{cell_idx,1};
             tmp_arr = curr_signals{frame_no};
             tmp_logic_arr(tmp_arr==1) = 1;
         end
@@ -286,6 +317,9 @@ else
 	% no signals displayed -- return empty displayed_centroids, 
 	displayed_centroids = [];
 end
+
+exclusion_tmp_struct = getappdata(APP.MAIN,'exclusion_tmp_struct');
+curr_incl_excl = exclusion_tmp_struct.manualExclusion;
 
 %
 %%%

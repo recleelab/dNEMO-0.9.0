@@ -364,6 +364,8 @@ if contains(curr_str,'[+]') || contains(curr_str,'[-]')
             inspector_menu = uicontextmenu();
             bg_inspector = uimenu('Parent',inspector_menu,'Label','Modify Background Collection Parameters',...
                 'callback',{@inspector_call,APP});
+            bg_kf_delete = uimenu('Parent',inspector_menu,'Label','Delete Background Collection Parameters',...
+                'callback',{@delete_bkgd_param_keyframe,APP});
             hand.UIContextMenu = inspector_menu;
             
     end
@@ -408,11 +410,12 @@ if contains(curr_str,'>')
         
     end
     
-    if contains(curr_str,'spot_') || contains(curr_str,'bg_')
-        disp('made it to inspector assignment');
+    if contains(curr_str,'offset_') || contains(curr_str,'pixel_')
         inspector_menu = uicontextmenu();
-        bg_inspector = uimenu('Parent',inspector_menu,'Label','Modify Background Collection Parameters',...
+        bg_inspector = uimenu('Parent',inspector_menu,'Label','Modify Background Parameter Keyframe',...
             'callback',{@inspector_call,APP});
+        bg_deletion = uimenu('Parent',inspector_menu,'Label','Delete Background Parameter Keyframe',...
+            'callback',{@delete_bkgd_param_keyframe,APP});
         hand.UIContextMenu = inspector_menu;
         str_tokens = strsplit(curr_str,'_');
         frame_string = str_tokens{1};
@@ -439,6 +442,20 @@ if contains(curr_str,'>')
         display_call(APP.film_slider,1,APP);
     end
     
+    if contains(curr_str,{'exclusion'})
+        delete_excl_menu = uicontextmenu();
+        delete_excl_kf = uimenu('parent',delete_excl_menu,'Label','Delete Exclusion Set',...
+            'callback',{@delete_exclusion_keyframe_data, APP});
+        hand.UIContextMenu = delete_excl_menu;
+        str_tokens = strsplit(curr_str,'_');
+        frame_string = str_tokens{1};
+        some_str_loc = strfind(frame_string,'>');
+        sub_str = frame_string(some_str_loc+6:end);
+        frame_no = str2num(char(sub_str));
+        APP.film_slider.Value = frame_no;
+        
+        display_call(APP.film_slider,1,APP);
+    end
     
 end
 

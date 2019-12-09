@@ -79,6 +79,18 @@ function [] = terminate_polygon_modification(hand, evt, APP)
 %% <placeholder>
 %
 
+% trying to update for current-frame position
+cell_idx = APP.created_cell_selection.Value - 1;
+frame_no = APP.film_slider.Value;
+
+polygon_list = getappdata(APP.MAIN,'polygon_list');
+curr_cell = polygon_list{cell_idx};
+curr_pos = curr_cell.polygons{frame_no};
+
+curr_cell = curr_cell.updatePolygons(curr_pos, frame_no);
+polygon_list{cell_idx} = curr_cell;
+setappdata(APP.MAIN,'polygon_list',polygon_list);
+
 coordinate_spots_to_cells(APP);
 
 APP.keyframing_map.Enable = 'on';

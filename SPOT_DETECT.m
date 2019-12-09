@@ -504,6 +504,16 @@ classdef SPOT_DETECT
                 end
             end
             
+            % addendum - get manual exclusions
+            manual_frames = obj.getExclusionFrames();
+            if ~isempty(manual_frames)
+                feature_frames = cat(1,feature_frames,manual_frames.');
+                for ii=1:length(manual_frames)
+                    new_string = strcat('    >Frame',num2str(manual_frames(ii)),'_manual_exclusion_set');
+                    feature_strs = cat(1,feature_strs,new_string);
+                end
+            end
+            
             [~, sorted_order] = sort(feature_frames);
             string_arr = feature_strs(sorted_order);
             
@@ -801,6 +811,67 @@ classdef SPOT_DETECT
             end
         end
         
+        % SPOT_DETECT.removeBGParam
+        function obj = removeBGParam(obj, keyframing_string, IMG)
+            
+            if contains(keyframing_string,'offset')
+                curr_bg_arr = obj.bgOffArr;
+                assignment_field = 'bgOffArr';
+            else
+                curr_bg_arr = obj.bgPixArr;
+                assignment_field = 'bgPixArr';
+            end
+            
+            str_tokens = strsplit(keyframing_string,'_');
+            frame_string = str_tokens{1};
+            some_str_loc = strfind(frame_string,'>');
+            sub_str = frame_string(some_str_loc+6:end);
+            frame_no = str2num(char(sub_str));
+            
+            curr_bg_arr(2,frame_no) = 0;
+            
+            prev_kf = find(curr_bg_arr(2,1:frame_no));
+            next_kf = find(curr_bg_arr(2,frame_no+1:end));
+            end_frame = frame_no;
+            
+            if isempty(prev_kf) && isempty(next_kf)
+                % no other keyframe data -- 
+                curr_bg_arr(1,:) = 0;
+                curr_bg_arr(2,1) = 1;
+                
+                frame_range = [1 size(curr_bg_arr,2)];
+                
+            else
+                if isempty(next_kf)
+                    curr_bg_arr(1,frame_no:end) = 0;
+                    end_frame = size(curr_bg_arr,2)+1;
+                else
+                    curr_bg_arr(1,frame_no:frame_no+next_kf-1) = 0;
+                    end_frame = frame_no+next_kf;
+                end
+
+                if isempty(prev_kf)
+                    curr_bg_arr(1,1:frame_no) = 0;
+                    frame_no = 1;
+                    frame_range = [1 end_frame-1];
+                else
+                    nearest_kf = prev_kf(end);
+                    curr_bg_arr(1,nearest_kf:end_frame-1) = curr_bg_arr(1,nearest_kf);
+                    frame_range = [nearest_kf end_frame-1];
+                end
+            end
+            
+            tmp_overlay = struct;
+            tmp_overlay.frameNo = 0;
+            
+            obj.(assignment_field) = curr_bg_arr;
+            
+            obj = obj.updateBGInfo(IMG, tmp_overlay, frame_range);
+            
+            
+            
+        end
+        
         % SPOT_DETECT.checkRemovalProp
         function [flag, des] = checkRemovalProp(obj, keyframing_string)
             
@@ -945,6 +1016,19 @@ classdef SPOT_DETECT
             logic_arr = obj.manualExclusion{frame_no};
         end
         
+        % obj.removeManualExclusion
+        function obj = removeManualExclusion(obj, keyframing_string)
+            % get frame no first
+            some_tokens = strsplit(keyframing_string,'_');
+            frame_string = some_tokens{1};
+            some_loc = strfind(frame_string,'>');
+            frame_no = str2num(frame_string(some_loc+6:end));
+            
+            obj.manualExclusion{frame_no} = logical(zeros(size(obj.spotInfoArr{frame_no}.objCoords,1),1));
+            
+            
+        end
+        
         % obj.getExclusionLogicArray
         function [logic_arr] = getExclusionLogicArray(obj, frame_no)
             
@@ -954,6 +1038,16 @@ classdef SPOT_DETECT
             % manual exclusions
             man_excl = obj.getManualExclusions(frame_no);
             logic_arr(man_excl) = 1;
+        end
+        
+        % obj.getExclusionFrames
+        function frames = getExclusionFrames(obj)
+            frames = [];
+            for ii=1:length(obj.manualExclusion)
+                if any(obj.manualExclusion{ii})
+                    frames = cat(2,frames,ii);
+                end
+            end
         end
         
         % obj.getSpotDetectFields

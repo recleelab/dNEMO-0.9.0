@@ -112,7 +112,7 @@ switch process_check
 		% signals
 		if value_check(1,1)
 			% display_signals(APP,value_check(4,1),toggle_check(1,1),toggle_check(2,1));
-            display_signals2(APP,value_check(4,1),toggle_check(1,1),toggle_check(2,1));
+            display_signals2(APP,value_check(4,1),toggle_check(1,1),toggle_check(2,1),toggle_check(4,1));
 		end
 		
 		% cells
@@ -216,7 +216,7 @@ switch process_check
 		% signals
 		if value_check(1,1)
 			% display_signals(APP,value_check(4,1),toggle_check(1,1),toggle_check(2,1));
-            display_signals2(APP,value_check(4,1),toggle_check(1,1),toggle_check(2,1));
+            display_signals2(APP,value_check(4,1),toggle_check(1,1),toggle_check(2,1),toggle_check(4,1));
 		end
 		
 		% cells
@@ -231,7 +231,11 @@ switch process_check
 			% display trajectories OR 3D cell 
 			display_secondary_info(APP,value_check(3,1));
 		end
-		hold off
+
+        
+        % addendum - display signals that cannot be removed w/ an 'x'
+        % display_signals_removed_by_feature(APP,toggle_check(4,1));
+        hold off
 		
 		% actual exclusion call
 		% exclude_signals(APP);
@@ -517,7 +521,7 @@ end
 %%%
 %
 
-function [] = display_signals2(APP,kf_arg,frame_tog,cell_tog)
+function [] = display_signals2(APP,kf_arg,frame_tog,cell_tog,excl_tog)
 %% <placeholder>
 %
 
@@ -581,7 +585,7 @@ if ~isempty(overlay) && frame_tog
             scatter(APP.ax2,slice_coords(:,1),slice_coords(:,2),[],co(1,:),...
                 'ButtonDownFcn',{@self_scatter_select,APP});
         end
-        if ~isempty(excl_coords_slice)
+        if ~isempty(excl_coords_slice) && excl_tog
             scatter(APP.ax2,excl_coords_slice(:,1),excl_coords_slice(:,2),[],'red',...
                 'ButtonDownFcn',{@self_scatter_select,APP});
         end
@@ -590,7 +594,7 @@ if ~isempty(overlay) && frame_tog
             scatter(APP.ax2,all_coords(:,1),all_coords(:,2),[],co(1,:),...
                 'ButtonDownFcn',{@self_scatter_select,APP});
         end
-        if ~isempty(excl_coords)
+        if ~isempty(excl_coords) && excl_tog
             scatter(APP.ax2,excl_coords(:,1),excl_coords(:,2),[],'red',...
                 'ButtonDownFcn',{@self_scatter_select,APP});
         end
@@ -621,6 +625,20 @@ if ~isempty(overlay) && cell_tog
             if ~isempty(obj_coords)
                 scatter(APP.ax2,obj_coords(:,1),obj_coords(:,2),[],curr_color,...
                     'ButtonDownFcn',{@self_scatter_select,APP});
+            end
+            
+            if excl_tog
+                % disp('made it to exclusions from cell display');
+                tmp_cell_logic = curr_cell{frame_no};
+                tmp_cell_logic(feature_incl) = 0;
+                % logically_excluded = ~feature_incl;
+                % logically_excluded(curr_cell_logic==0) = 0;
+                excl_coords = tmp_obj_coords(tmp_cell_logic,:);
+                % excl_coords = tmp_obj_coords(logically_excluded,:);
+                if ~isempty(excl_coords)
+                    scatter(APP.ax2,excl_coords(:,1),excl_coords(:,2),[],'red',...
+                        'ButtonDownFcn',{@self_scatter_select,APP});
+                end
             end
             
         end
@@ -699,6 +717,29 @@ else
 	patch(APP.ax2,polygon_in_frame(:,1),polygon_in_frame(:,2),patch_color,...
 			'FaceColor','none','EdgeColor',patch_color,'LineWidth',1.25);
 	%
+end
+
+%
+%%%
+%%%%%
+%%%
+%
+
+function [] = display_signals_removed_by_feature(APP, exclusion_toggle)
+%% <placeholder>
+%
+disp('made it to x-marker display');
+assignin('base','exclusion_toggle',exclusion_toggle);
+if exclusion_toggle
+    
+    frame_no = APP.film_slider.Value;
+    spot_detect = getappdata(APP.MAIN,'spot_detect');
+    obj_coords = spot_detect.spotInfoArr{frame_no}.objCoords;
+    feature_excl_logic = spot_detect.featureExclusion{frame_no};
+    non_removable_coords = obj_coords(feature_excl_logic,:);
+    scatter(APP.ax2,non_removable_coords(:,1),non_removable_coords(:,2),...
+        [],'red','marker','x');
+    
 end
 
 %
