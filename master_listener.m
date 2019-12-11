@@ -224,6 +224,15 @@ switch string_arg
 				APP.add_keyframe_button.Enable = 'off';
 				APP.modify_keyframe_button.Enable = 'off';
 				APP.del_keyframe_button.Enable = 'off';
+                
+                % addendum -- keyframe buttons
+                APP.create_keyframe_button.Enable = 'off';
+                APP.quick_detect_button.Enable = 'off';
+                APP.full_detect_button.Enable = 'off';
+                APP.hist_ax.HitTest = 'off';
+                
+                % addendum -- crosshair
+                APP.MAIN.Pointer = 'cross';
 			
 			case 2
 				% shutting down, need to turn certain components back on
@@ -240,8 +249,18 @@ switch string_arg
 				
 				% turning on keyframe components
 				APP.add_keyframe_button.Enable = 'on';
+                
+                % addendum -- keyframe buttons
+                APP.create_keyframe_button.Enable = 'on';
+                APP.quick_detect_button.Enable = 'on';
+                APP.full_detect_button.Enable = 'on';
+                APP.hist_ax.HitTest = 'on';
+                
+                % addendum -- clearing local memory
+                setappdata(APP.MAIN,'exclusion_tmp_struct',[]);
 				
 				% turning on additional display components
+                APP.MAIN.Pointer = 'arrow';
 		end
 				
 			

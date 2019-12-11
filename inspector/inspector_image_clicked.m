@@ -4,9 +4,11 @@ function [] = inspector_image_clicked(hand,evt,INSPECT)
 
 switch hand.Type
     case 'axes'
-        %todo
+        disp('axes clicked');
     case 'scatter'
-        %todo
+        disp('scatter clicked');
+        tmp_parent = hand.Parent;
+        hand = tmp_parent;
 end
 
 pt_clicked = evt.IntersectionPoint;

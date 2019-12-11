@@ -81,7 +81,6 @@ gamma = 1;
 J = imadjust(I,MOD_LO_HI,[0 1],gamma);
 
 step_val = (max(max(I)) - min(min(I)))./50;
-assignin('base','step_val',step_val);
 
 if beta >= 0
     beta = step_val.*beta;
@@ -135,6 +134,15 @@ switch process_check
                     if overlay.frameNo == curr_index
                         spot_filter_histogram_setup(APP);
                     end
+                end
+            case {APP.hist_ax}
+                overlay = getappdata(APP.MAIN,'OVERLAY');
+                if overlay.spotDetectFlag
+                    % user manipulating features - clear local keyframing
+                    % data
+                    spot_detect = getappdata(APP.MAIN,'spot_detect');
+                    overlay.spotDetectKFExcl = spot_detect.manualExclusion{overlay.frameNo};
+                    setappdata(APP.MAIN,'OVERLAY',overlay);
                 end
         end
         

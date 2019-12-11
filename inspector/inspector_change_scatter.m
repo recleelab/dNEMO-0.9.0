@@ -2,6 +2,8 @@ function [] = inspector_change_scatter(hand,evt,INSPECT)
 %% <placeholder>
 %  
 
+disp('accessed inspector_change_scatter');
+
 spotInfo = getappdata(INSPECT.figure_handle,'spotInfo');
 
 

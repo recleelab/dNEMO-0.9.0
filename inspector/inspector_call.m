@@ -77,7 +77,7 @@ switch app_arg
 end
 
 close(INSPECT.figure_handle);
-delete('INSPECT');
+% delete('INSPECT');
 update_keyframe_data(APP);
 display_call(APP.film_slider,1,APP);
 

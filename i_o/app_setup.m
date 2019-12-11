@@ -79,7 +79,18 @@ APP.ax2.XLim = [0.5 imWidth+0.5];
 APP.ax2.YLim = [0.5 imHeight+0.5];
 
 % figure startup - reset necessary values
-% TODO
+setappdata(APP.MAIN,'spot_detect',[]);
+setappdata(APP.MAIN,'OVERLAY',[]);
+update_keyframe_data(APP);
+
+% histogram clearing
+cla(APP.hist_ax);
+APP.hist_ax_min_box.String = '';
+APP.hist_ax_max_box.String = '';
+APP.feature_select_dropdown.Enable = 'off';
+
+% clearing trajectory axis
+cla(APP.trajectory_ax);
 
 display_call(APP.film_slider,1,APP);
 axis_display_sync(APP,APP.ax1,APP.ax2);
