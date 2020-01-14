@@ -1,10 +1,10 @@
-function [frame_centroids,lbl,indices] = spot_finder_two_dim(image,user_threshold,overseg)
+function [frame_centroids,lbl,indices] = spot_finder_two_dim(image,user_threshold,overseg, wav_level)
 %% spotfinder for 2-dimensional image
 %
 
 % create wavelet map, establish threshold
 c = user_threshold;
-wavmap = atrous_wavelettrans(image,2);
+wavmap = atrous_wavelettrans(image,wav_level);
 threshold = nanmean(wavmap(:)) + c*nanstd(wavmap(:));
 
 % oversegcheck, might have to revisit

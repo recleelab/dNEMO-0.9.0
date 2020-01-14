@@ -14,7 +14,9 @@ updated_lbls = cell(Z,1);
 % user parameters
 frame_limit = param_struct.FRAME_LIMIT;
 overseg = param_struct.OVERSEG;
-transform_level = param_struct.WAV_LEVEL;
+wav_level = param_struct.WAV_LEVEL;
+
+assignin('base','param_struct',param_struct);
 
 some_waitbar = waitbar(0,'Wavelet transform on single image',...
     'CreateCancelBtn','setappdata(gcbf,''canceling'',1)');
@@ -29,7 +31,7 @@ if Z==1
     
         % generate wavelet map
         if ~getappdata(some_waitbar,'canceling')
-            [centroids{Z},lbl,indices] = spot_finder_two_dim(curr_frame,user_threshold, overseg);
+            [centroids{Z},lbl,indices] = spot_finder_two_dim(curr_frame,user_threshold, overseg, wav_level);
         end
 
         % generate identified structures' properties
@@ -58,7 +60,7 @@ else
 
             % generate wavelet map
             if ~getappdata(some_waitbar,'canceling')
-                [centroids{i},lbl,indices] = spot_finder_two_dim(curr_frame(:,:,i),user_threshold,overseg);
+                [centroids{i},lbl,indices] = spot_finder_two_dim(curr_frame(:,:,i),user_threshold,overseg,wav_level);
             end
 
             % lbl matrix adjustment
@@ -176,9 +178,46 @@ else
                 end
             end
         end
+        
+        %{
+        % addendum - softening frame limit at bottom and top of stack
+        addendum_spot_mat_rows = [];
+        if ~getappdata(some_waitbar, 'canceling') && frame_limit~=1
+            
+            lims = [1 length(centroids)];
+            starting_ind = [];
+            for centroid_idx=1:length(lims)
+                some_centroids = centroids{lims(centroid_idx)};
+                nextrow = find(all(spotMat==0,2),1);
+                if isempty(starting_ind)
+                    starting_ind = nextrow;
+                end
+                if ~isempty(some_centroids)
+                    centroid_ind = 1:size(some_centroids,1);
+                    indices_included = ismember(1:size(some_centroids,1),spotMat(:,lims(centroid_idx)));
+                    centroid_ind(indices_included) = [];
+                    if ~isempty(centroid_ind)
+                        spotMat(nextrow:nextrow+length(centroid_ind)-1,lims(centroid_idx)) = centroid_ind;
+                    end
+                end
+            end
+            nextrow = find(all(spotMat==0,2),1);
+            ending_ind = nextrow-1;
+            addendum_spot_mat_rows = spotMat(starting_ind:1:ending_ind,:);
+            
+        end
+        % end addendum for softening the frame limit at axial limits
+        %}
 
         % spotInfo organization
         spotMat = spotMat(sum(spotMat~=0,2)>=frame_limit,:);
+        %{
+        % addendum for softening the frame limit at axial limits
+        if ~isempty(addendum_spot_mat_rows)
+            spotMat = cat(1,spotMat,addendum_spot_mat_rows);
+        end
+        % end addendum for softening the frame limit at axial limits
+        %}
         spotCount = size(spotMat,1);
         objCoords = zeros(spotCount,3);
         allobjCoords = zeros(nnz(spotMat),4); % records all 2D spots counted on each frame

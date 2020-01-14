@@ -77,7 +77,7 @@ classdef SPOT_DETECT
                             IMG = IMG.setCurrFrame(i);
                             curr_frame = im2double(IMG.getCurrFrame());
 
-                            [centroids, lbl, indices] = spot_finder_two_dim(curr_frame, wav_thresh, overseg);
+                            [centroids, lbl, indices] = spot_finder_two_dim(curr_frame, wav_thresh, overseg, wav_level);
                             [spotInfo] = two_dim_sig_calc(curr_frame, centroids, lbl, indices);
                             full_spotInfo{i} = spotInfo;
 
@@ -92,7 +92,7 @@ classdef SPOT_DETECT
                             IMG = IMG.setCurrFrame(i);
                             curr_frame = im2double(IMG.getCurrFrame());
 
-                            [spotInfo] = spot_finder_three_dim(curr_frame, wav_thresh, frame_lim, overseg);
+                            [spotInfo] = spot_finder_three_dim(curr_frame, wav_thresh, frame_lim, overseg, wav_level);
                             full_spotInfo{i} = spotInfo;
 
                             % waitbar handling
@@ -646,6 +646,7 @@ classdef SPOT_DETECT
             for i=1:length(frames)
                 
                 curr_frame_no = frames(i);
+                wav_level = obj.wavLevelArr(1,curr_frame_no);
                 wav_thresh = obj.wavThreshArr(1,curr_frame_no);
                 overseg = obj.overSegArr(1,curr_frame_no);
                 frame_lim = obj.zMinArr(1,curr_frame_no);
@@ -667,7 +668,7 @@ classdef SPOT_DETECT
                         IMG = IMG.setCurrFrame(curr_frame_no);
                         curr_frame = im2double(IMG.getCurrFrame());
                         
-                        [centroids, lbl, indices] = spot_finder_two_dim(curr_frame, wav_thresh, overseg);
+                        [centroids, lbl, indices] = spot_finder_two_dim(curr_frame, wav_thresh, overseg, wav_level);
                         [spotInfo] = two_dim_sig_calc(curr_frame, centroids, lbl, indices);
                         obj.spotInfoArr{curr_frame_no} = spotInfo;
                         
@@ -682,7 +683,7 @@ classdef SPOT_DETECT
                         IMG = IMG.setCurrFrame(curr_frame_no);
                         curr_frame = im2double(IMG.getCurrFrame());
                         
-                        [spotInfo] = spot_finder_three_dim(curr_frame, wav_thresh, frame_lim, overseg);
+                        [spotInfo] = spot_finder_three_dim(curr_frame, wav_thresh, frame_lim, overseg, wav_level);
                         obj.spotInfoArr{curr_frame_no} = spotInfo;
                         
                         % waitbar handling

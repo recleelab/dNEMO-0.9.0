@@ -1,4 +1,4 @@
-function [spotInfo] = spot_finder_three_dim(image,threshold,frame_limit,overseg)
+function [spotInfo] = spot_finder_three_dim(image,threshold,frame_limit,overseg,wav_level)
 %% main 'spot_finder' method. calls spot_finder_two_dim to operate on every slice
 %  in the 3D image, passing along the wavelet threshold and oversegmentation arguments 
 %  (in:threshold & in:overseg). returns large results struct with all relevant information
@@ -66,7 +66,7 @@ updated_lbls = cell(z_slices,1);
 
 for i=1:z_slices
     
-	[centroids{i},lbl,indices] = spot_finder_two_dim(image(:,:,i),threshold,overseg);
+	[centroids{i},lbl,indices] = spot_finder_two_dim(image(:,:,i),threshold,overseg,wav_level);
 
     % code to ensure watershed edges are included as part of the signal
     [ii, jj] = find(lbl==0);
@@ -174,7 +174,44 @@ if frame_limit == 1
     end
 end
 
+% addendum - softening frame limit at bottom and top of stack
+%{
+addendum_spot_mat_rows = [];
+if frame_limit~=1
+
+    lims = [1 length(centroids)];
+    starting_ind = [];
+    for centroid_idx=1:length(lims)
+        some_centroids = centroids{lims(centroid_idx)};
+        nextrow = find(all(spotMat==0,2),1);
+        if isempty(starting_ind)
+            starting_ind = nextrow;
+        end
+        if ~isempty(some_centroids)
+            centroid_ind = 1:size(some_centroids,1);
+            indices_included = ismember(1:size(some_centroids,1),spotMat(:,lims(centroid_idx)));
+            centroid_ind(indices_included) = [];
+            if ~isempty(centroid_ind)
+                spotMat(nextrow:nextrow+length(centroid_ind)-1,lims(centroid_idx)) = centroid_ind;
+            end
+        end
+    end
+    nextrow = find(all(spotMat==0,2),1);
+    ending_ind = nextrow-1;
+    addendum_spot_mat_rows = spotMat(starting_ind:1:ending_ind,:);
+
+end
+% end addendum for softening the frame limit at axial limits
+%}
+
 spotMat = spotMat(sum(spotMat~=0,2)>=frame_limit,:);
+%{
+% addendum for softening the frame limit at axial limits
+if ~isempty(addendum_spot_mat_rows)
+    spotMat = cat(1,spotMat,addendum_spot_mat_rows);
+end
+% end addendum for softening the frame limit at axial limits
+%}
 spotCount = size(spotMat,1);
 objCoords = zeros(spotCount,3);
 allobjCoords = zeros(nnz(spotMat),4); % records all 2D spots counted on each frame
