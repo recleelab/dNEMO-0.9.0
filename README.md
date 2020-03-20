@@ -1,7 +1,7 @@
 # dNEMO-0.9.0
 BETA version of detecting-NEMO (dNEMO). 
 
-Download dNEMO and add the folder to current MATLAB path. Type RUN_ME into the command window to open the tool.
+Download dNEMO and add the folder and all subfolders to the current MATLAB path. Type RUN_ME into the command window to open the tool.
 
 Guided walkthrough for installation and use of dNEMO:
 dNEMO-0.9.0/DNEMO_READ_ME.docx
