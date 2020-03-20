@@ -16,7 +16,7 @@ Simulated images created using the "simulate_psf_image" package and used to test
 https://pitt.box.com/s/pic5e5c7pxhlismfljhyregfrlkbwcjt
 
 Standalone copies of the application for Windows & Mac/Linux (last updated March 19, 2020) can be found here:
-
+https://pitt.box.com/s/ie49oy4w9e3jabj3uuzw4ioaiyslbx26
 
 dNEMO uses bioformats to handle image input into the application, and is cited here:
 
