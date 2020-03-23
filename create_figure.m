@@ -590,6 +590,8 @@ for i=1:size(tooltip_string_array,2)
 end
 
 %% menu assignments
+%
+% FILE
 file_menu = uimenu(APP.MAIN,'label','File');
 file_menu_open = uimenu(file_menu,'label','Load Images');
 file_menu_save = uimenu(file_menu,'label','Save');
@@ -599,16 +601,28 @@ file_menu_image_src = uimenu(file_menu_directory,'label','Images');
 file_menu_image_results = uimenu(file_menu_directory,'label','Results');
 %
 
+% IMAGE HANDLING
+image_menu = uimenu(APP.MAIN,'label','Image');
+% image_menu_data = uimenu(image_menu,'label','Current Source Image');
+image_menu_display = uimenu(image_menu,'label','3D Display');
+display_menu_01 = uimenu(image_menu_display,'label','Max Z-Project','checked','on');
+display_menu_03 = uimenu(image_menu_display,'label','Full 3D Stack');
+image_menu_channel = uimenu(image_menu,'label','Set Image Channel');
+image_menu_import = uimenu(image_menu,'label','Import Reference Image');
+image_menu_mask = uimenu(image_menu, 'label', 'Import Cell Mask TIFF');
+image_menu_csv = uimenu(image_menu, 'label', 'Import Cell Mask CSV/XLS');
+
+% SPOT DETECTION SETTINGS
 settings_menu = uimenu(APP.MAIN,'label','Settings');
 settings_menu_search = uimenu(settings_menu,'label','Signal Parameters');
 % settings_menu_detect = uimenu(settings_menu,'label','Detection Method');
 % settings_menu_default = uimenu(settings_menu,'label','Apply Default');
 %
 
-display_menu = uimenu(APP.MAIN,'label','3D Display');
-display_menu_01 = uimenu(display_menu,'label','Max Z-Project','checked','on');
+% display_menu = uimenu(APP.MAIN,'label','3D Display');
+% display_menu_01 = uimenu(display_menu,'label','Max Z-Project','checked','on');
 % display_menu_02 = uimenu(display_menu,'label','Icy MIP');
-display_menu_03 = uimenu(display_menu,'label','Full 3D Stack');
+% display_menu_03 = uimenu(display_menu,'label','Full 3D Stack');
 
 parallel_menu = uimenu(APP.MAIN,'label','Parallel Computing');
 parallel_menu_01 = uimenu(parallel_menu,'label','Preferences');
@@ -638,6 +652,7 @@ set(file_menu_reload,'callback',{@file_reload,APP});
 set([file_menu_image_src,file_menu_image_results],'callback',{@change_directory,APP});
 % set([display_menu_01,display_menu_02,display_menu_03],'callback',{@menu_display_3d_select,APP});
 set([display_menu_01,display_menu_03],'callback',{@menu_display_3d_select,APP});
+set([image_menu_mask, image_menu_csv],'callback',{@cell_mask_handler, APP});
 % set(settings_menu_search,'callback',{@simple_settings_input,APP});
 set(settings_menu_search,'callback',{@settings_gui_call,APP});
 set([APP.film_slider,APP.z_slice_slider],'callback',{@display_call,APP});

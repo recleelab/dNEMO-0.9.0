@@ -179,7 +179,6 @@ else
             end
         end
         
-        %{
         % addendum - softening frame limit at bottom and top of stack
         addendum_spot_mat_rows = [];
         if ~getappdata(some_waitbar, 'canceling') && frame_limit~=1
@@ -207,17 +206,14 @@ else
             
         end
         % end addendum for softening the frame limit at axial limits
-        %}
 
         % spotInfo organization
         spotMat = spotMat(sum(spotMat~=0,2)>=frame_limit,:);
-        %{
         % addendum for softening the frame limit at axial limits
         if ~isempty(addendum_spot_mat_rows)
             spotMat = cat(1,spotMat,addendum_spot_mat_rows);
         end
         % end addendum for softening the frame limit at axial limits
-        %}
         spotCount = size(spotMat,1);
         objCoords = zeros(spotCount,3);
         allobjCoords = zeros(nnz(spotMat),4); % records all 2D spots counted on each frame

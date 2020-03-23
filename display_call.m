@@ -24,7 +24,8 @@ else
     curr_index = round(APP.film_slider.Value);
     APP.film_slider.Value = curr_index;
     
-    display_select_handle = findobj('checked','on');
+    display_menu = findobj(allchild(APP.MAIN),'type','uimenu','label','3D Display');
+    display_select_handle = findobj(allchild(display_menu),'checked','on');
     display_select = display_select_handle.Label;
     
     IMG = IMG.setCurrFrame(curr_index);

@@ -97,7 +97,8 @@ for i=1:z_slices
         % find all spots in previous frame within Euclidean dist of 2 of
         % each spot in current frame
         % matchLocs = find(dist(centroidsPrev, centroidsCurrent')<2);
-        distance_arr = dist(centroidsPrev, centroidsCurrent');
+        % distance_arr = dist(centroidsPrev, centroidsCurrent');
+        distance_arr = dnemo_dist(centroidsPrev, centroidsCurrent');
         actual_dists = distance_arr<2;
         matchLocs = find(distance_arr<2);
         [prevRows,currRows] = ind2sub(length(centroidsPrev),matchLocs);
@@ -175,7 +176,6 @@ if frame_limit == 1
 end
 
 % addendum - softening frame limit at bottom and top of stack
-%{
 addendum_spot_mat_rows = [];
 if frame_limit~=1
 
@@ -202,16 +202,13 @@ if frame_limit~=1
 
 end
 % end addendum for softening the frame limit at axial limits
-%}
 
 spotMat = spotMat(sum(spotMat~=0,2)>=frame_limit,:);
-%{
 % addendum for softening the frame limit at axial limits
 if ~isempty(addendum_spot_mat_rows)
     spotMat = cat(1,spotMat,addendum_spot_mat_rows);
 end
 % end addendum for softening the frame limit at axial limits
-%}
 spotCount = size(spotMat,1);
 objCoords = zeros(spotCount,3);
 allobjCoords = zeros(nnz(spotMat),4); % records all 2D spots counted on each frame

@@ -12,6 +12,27 @@ imWidth = IMG.Width;
 
 setappdata(APP.MAIN,'IMG',IMG);
 
+% additional image setup
+C = IMG.C;
+curr_channel = IMG.CurrChannel;
+
+main_channel_menu = findobj(allchild(APP.MAIN),'type','uimenu','label','Set Image Channel');
+prev_children = allchild(main_channel_menu);
+delete(prev_children);
+
+if C==1
+    next_label = strcat('Channel 0',num2str(C));
+    uimenu(main_channel_menu,'label',next_label,'callback',{@set_image_channel, APP},'enable','off');
+else
+    for cc=1:1:C
+        next_label = strcat('Channel 0',num2str(cc));
+        tmp_menu = uimenu(main_channel_menu,'label',next_label,'callback',{@set_image_channel, APP});
+        if cc==curr_channel
+            tmp_menu.Checked = 'on';
+        end
+    end
+end
+
 % setup data storage - exclusion array
 excluded_array = cell([1 T]);
 setappdata(APP.MAIN,'excluded_array',excluded_array);
