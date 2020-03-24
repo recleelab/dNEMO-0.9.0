@@ -70,6 +70,9 @@ cell_signals = getappdata(APP.MAIN,'cell_signals');
 cell_filename = strcat(root_name,'_ALL_CELLS');
 save(cell_filename,'cells','trajectories','-v7.3');
 
+% xls addendum
+dnemo_results_to_excel(root_name, {spot_arr; cells; trajectories});
+
 %{
 KEYFRAMES = getappdata(APP.MAIN,'KEYFRAMES');
 [spot_arr] = parse_keyframes(KEYFRAMES);
