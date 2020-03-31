@@ -1,4 +1,4 @@
-function [] = file_save(hand,evt,APP)
+function [] = file_save_legacy(hand,evt,APP)
 %% <placeholder> 
 % 
 %  still not sold on final results file, but time is short

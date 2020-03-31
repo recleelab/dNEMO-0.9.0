@@ -1,6 +1,22 @@
 function [] = cell_mask_handler(hand, evt, APP)
-%% <placeholder>
+%% callback function which handles importing mask data to application
+%  
+%  initiates process for user to select data to import to create
+%  cellular masks, which are then converted into cell-polygon objects
+%  and saved to the application.
 %
+%  if user cancels prompt to select import data, process returns without
+%  creating cell-polygons / updating the polygon structure
+%
+%  INPUT: 
+%  . hand -- (graphics object input handle) 
+%  . evt -- (user click register event)
+%  . APP -- (application structure)
+%  
+%  OUTPUT:
+%  . None
+%
+
 
 valid_args = '*.tif;*.tiff;*.TIF;*.TIFF;*.csv;*.CSV;*.xls;*.xlsx';
 [mask_filename, mask_folderpath, ~] = uigetfile(valid_args,'Select cell mask input image');

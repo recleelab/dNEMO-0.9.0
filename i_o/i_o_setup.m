@@ -1,6 +1,14 @@
 function [] = i_o_setup(APP)
-%% fxn just to keep i/o setup separate from the figure creation, also so
-%  it's a bit more organized so I know it's all under one roof.
+%% function to handle i/o setup for the application
+%
+%  handles setting up default directory, confirming bioformats, etc.
+%  
+%  INPUT:
+%  . APP -- (application structure)
+%
+%  OUTPUT:
+%  . None
+%
 
 slash_character = '\';
 if ismac || isunix
@@ -17,9 +25,7 @@ for i=1:length(S)
 	end
 end
 
-% find out if bfmatlab exists somewhere w/in 
-
-% get current pathway
+% get current path
 current_filepath = pwd;
 filepath_repeated = 0;
 is_bfmatlab_here = 0;
@@ -47,4 +53,8 @@ setappdata(APP.MAIN,'results_dir_path',default_results_dir);
 setappdata(APP.MAIN,'is_bfmatlab_here',is_bfmatlab_here);
 setappdata(APP.MAIN,'matlab_dir',matlab_dir);
 
-% TEMPORARY MEASURES W/ REGARDS TO BIOFORMATS, FINAL PRODUCT SHOULD HAVE IT PACKAGED
+%
+%%%
+%%%%%
+%%%
+%

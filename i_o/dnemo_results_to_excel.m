@@ -1,5 +1,15 @@
 function [] = dnemo_results_to_excel(root_name, cell_arr)
-%% <placeholder>
+%% function which handles export to excel for either windows/mac
+%
+%  happens after saving all the mat-files, so it uses structures
+%  created for saving to mat-file to write to spreadsheet
+%  
+%  INPUT:
+%  . root_name -- (string name used for original output files)
+%  . cell_arr -- (cell array of structures to write to excel)
+%
+%  OUTPUT:
+%  . None
 %
 
 xls_answer = questdlg('Additionally save results file as xls/csv spreadsheet?',...

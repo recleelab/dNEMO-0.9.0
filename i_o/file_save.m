@@ -1,9 +1,18 @@
 function [] = file_save(hand,evt,APP)
-%% <placeholder>
+%% menu callback function to save current data 
 %
+%  current files produced include mat-files containing SPOT data, 
+%  SPOTS PER CELL data, and sample TRAJECTORY data. optionally produced
+%  files as determined by the user include an AVI of the created datasets
+%  and 
+%
+%  INPUT: 
+%  . hand -- menu object user clicked to initiate selection of new image
+%            file
+%  . evt -- evt object passed with any callback function
+%  . APP -- application structure
 %
 
-% image_filename = getappdata(APP.MAIN,'filename');
 IMG = getappdata(APP.MAIN,'IMG');
 image_filename = IMG.img_filename;
 S = strsplit(image_filename,'.');
@@ -29,7 +38,6 @@ end
 root_name = resulting_filename;
 
 results_filename = strcat(root_name,'_full_results.mat');
-% utrack_foldername = strcat(root_name,'_utrack_results');
 
 % navigate to results folder
 cd(resulting_filepath);

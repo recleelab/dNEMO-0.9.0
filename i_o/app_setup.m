@@ -1,8 +1,16 @@
 function [] = app_setup(APP, IMG)
 %% function to handle app startup with new image loaded into workspace
+% 
+%  Handles initial startup given the current application structure
+%  and the newly created image object (selected by the user).
 %
-
-disp('setting up application');
+%  INPUT: 
+%  . APP -- (application structure)
+%  . IMG -- (TMP_IMG object)
+%  
+%  OUTPUT:
+%  . None
+%
 
 T = IMG.T;
 Z = IMG.Z;
@@ -12,7 +20,7 @@ imWidth = IMG.Width;
 
 setappdata(APP.MAIN,'IMG',IMG);
 
-% additional image setup
+% additional image setup - multichannel handling
 C = IMG.C;
 curr_channel = IMG.CurrChannel;
 

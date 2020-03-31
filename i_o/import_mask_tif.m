@@ -1,5 +1,17 @@
 function [polygon_list] = import_mask_tif(mask_filename, mask_folderpath, max_frames)
-%% <placeholder>
+%% function for importing cell mask data from tif mask
+%
+%  takes a uint8 / uint16 mask and creates cell-polygon objects in dNEMO 
+%  based on the input data
+%
+%  INPUT:
+%  . mask_filename -- tif filename to read in
+%  . mask_folderpath -- directory containing the tif
+%  . max_frames -- maximum number of frames for the current image in dNEMO
+% 
+%  OUTPUT:
+%  . polygon_list - data structure containing the cell-polygon objects
+%                   created from the imported mask
 %
 
 polygon_list = {};

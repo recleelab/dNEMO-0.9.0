@@ -1,5 +1,18 @@
 function [polygon_list] = import_mask_spreadsheet(xls_filename, xls_folderpath, max_frames)
-%% <placeholder>
+%% function for importing cell mask data from spreadsheet
+%
+%  takes a spreadsheet where the columns (1 - 4) are as follows:
+%  [frame cell_id x y]
+%  and creates cell-polygon objects in dNEMO based on the input data
+%
+%  INPUT:
+%  . xls_filename -- excel / csv filename to read in
+%  . xls_folderpath -- directory containing the spreadsheet
+%  . max_frames -- maximum number of frames for the current image in dNEMO
+% 
+%  OUTPUT:
+%  . polygon_list - data structure containing the cell-polygon objects
+%                   created from the imported spreadsheet
 %
 
 xls_flag = 1;

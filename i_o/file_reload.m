@@ -1,7 +1,23 @@
 function [] = file_reload(hand,evt,APP)
-%% 
-%  confirm that there's an image in the axis, otherwise reload will fail.
+%% function to reload save data and repopulate dNEMO data structures
+%
+%  prompts user to select a full-results mat-file previously created by
+%  dNEMO and populates the following structures with that data:
+%  . spot_detect 
+%  . cell_signals
+%  . polygon_list
+%  the script then proceeds to reset / repopulate any necessary data fields
+%  or user-interaction components based on the selected results-file.
 % 
+%  INPUT:
+%  . hand -- menu object user clicked to initiate selection of new image
+%            file
+%  . evt -- evt object passed with any callback function
+%  . APP -- application structure
+%
+%  OUTPUT:
+%  . None
+%
 
 ax_1_children = allchild(APP.ax1);
 if isempty(ax_1_children)

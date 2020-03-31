@@ -1,11 +1,11 @@
 function [] = file_load(hand, evt, APP)
-%% fxn for opening image/movie files
+%% function for initiating loading images into the application
 %
 %  INPUT: 
 %  . hand -- menu object user clicked to initiate selection of new image
 %            file
 %  . evt -- evt object passed with any callback function
-%  . APP -- main application.
+%  . APP -- application structure
 %
 %  supported image formats: TIFF, DV
 %  
@@ -29,8 +29,10 @@ if isequal(input_filename, 0)
 end
 cd(init_folder);
 
+% create new image object
 IMG = TMP_IMG(input_filename, input_filepath);
 
+% run application setup
 app_setup(APP, IMG); 
 
 is_same_path = strcmp(curr_image_path, input_filepath);
