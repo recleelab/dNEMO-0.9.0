@@ -249,6 +249,18 @@ switch process_check
 		% actual exclusion call
 		% exclude_signals(APP);
         exclude_signals2(APP);
+    
+    case 4
+        % mod - region exclusion happening
+        APP.ax2.PickableParts = 'visible';
+        APP.ax2.HitTest = 'on';
+        
+        region_exclude_call(APP.film_slider, 1, APP);
+        
+		if value_check(1,1)
+			% display_signals(APP,value_check(4,1),toggle_check(1,1),toggle_check(2,1));
+            display_signals2(APP,value_check(4,1),toggle_check(1,1),toggle_check(2,1),toggle_check(4,1));
+		end
 
 	
 	%

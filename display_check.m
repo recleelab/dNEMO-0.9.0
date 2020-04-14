@@ -24,6 +24,14 @@ if strcmp('Stop Removing Signals',APP.remove_signals_button.String)
 	process = 3;
 end
 
+% check - is there a region exclusion happening
+region_exclusion_happening = getappdata(APP.MAIN,'region_exclusion_happening');
+if ~isempty(region_exclusion_happening)
+    if region_exclusion_happening
+        process = 4;
+    end
+end
+
 %
 %%%
 %

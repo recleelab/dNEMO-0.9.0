@@ -599,6 +599,7 @@ file_menu_reload = uimenu(file_menu,'label','Reload Results');
 file_menu_directory = uimenu(file_menu,'label','Change Directory');
 file_menu_image_src = uimenu(file_menu_directory,'label','Images');
 file_menu_image_results = uimenu(file_menu_directory,'label','Results');
+file_menu_mod = uimenu(file_menu,'label','Run Add Mods');
 %
 
 % IMAGE HANDLING
@@ -625,7 +626,8 @@ settings_menu_search = uimenu(settings_menu,'label','Signal Parameters');
 % display_menu_03 = uimenu(display_menu,'label','Full 3D Stack');
 
 parallel_menu = uimenu(APP.MAIN,'label','Parallel Computing');
-parallel_menu_01 = uimenu(parallel_menu,'label','Preferences');
+parallel_menu_01 = uimenu(parallel_menu,'label','Toggle Parallel Pool');
+parallel_menu_02 = uimenu(parallel_menu,'label','Pool Preferences');
 
 %% color matrix global variable
 co = [0 0.4470 0.7410; 0.8500 0.3250 0.0980; 0.9290 0.6940 0.1250; 0.4940 0.1840 0.5560; 0.4660 0.6740 0.1880; 0.3010 0.7450 0.9330; 0.6350 0.0780 0.1840];
@@ -650,11 +652,13 @@ set(file_menu_open,'callback',{@file_load,APP});
 set(file_menu_save,'callback',{@file_save,APP});
 set(file_menu_reload,'callback',{@file_reload,APP});
 set([file_menu_image_src,file_menu_image_results],'callback',{@change_directory,APP});
+set(file_menu_mod,'callback',{@add_mods, APP});
 % set([display_menu_01,display_menu_02,display_menu_03],'callback',{@menu_display_3d_select,APP});
 set([display_menu_01,display_menu_03],'callback',{@menu_display_3d_select,APP});
 set([image_menu_mask, image_menu_csv],'callback',{@cell_mask_handler, APP});
 % set(settings_menu_search,'callback',{@simple_settings_input,APP});
 set(settings_menu_search,'callback',{@settings_gui_call,APP});
+set(parallel_menu_01,'callback',{@set_par_processes, APP});
 set([APP.film_slider,APP.z_slice_slider],'callback',{@display_call,APP});
 set([APP.brightness_slider,APP.contrast_slider,APP.cell_boundary_toggle,APP.excluded_signal_toggle],'callback',{@display_call,APP});
 set([APP.frame_signal_toggle,APP.cell_signal_toggle,APP.created_cell_selection,APP.remove_signals_button],'callback',{@display_listener,APP});

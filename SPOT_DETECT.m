@@ -55,12 +55,26 @@ classdef SPOT_DETECT
 
                 % spot info storage
                 full_spotInfo = cell([1 num_frames]);
+                
+                % parallel process handling
+                par_flag = 0;
+                tmp_ver_struct = ver;
+                avail_toolboxes = {tmp_ver_struct.Name}.';
+                par_toolbox_present = max(strcmp(avail_toolboxes, 'Parallel Computing Toolbox'));
+                if par_toolbox_present
+                    if ~isempty(gcp('nocreate'))
+                        par_flag = 1;
+                    end
+                end
+                
+                frame_ref = zeros(num_frames,1);
+                par_marker = 1;
 
                 % waitbar handling
                 wbar = waitbar(0,'Wavelet Transform 0% Complete (1 of 2)');
 
                 for i=1:num_frames
-                    if i==OVERLAY.frameNo && ~isempty(OVERLAY.spotInfo)
+                    if i==OVERLAY.frameNo && ~isempty(OVERLAY.spotInfo) && ~par_flag
 
                         full_spotInfo{i} = OVERLAY.spotInfo;
 
@@ -69,6 +83,10 @@ classdef SPOT_DETECT
                         displayed_percent_done = num2str(round(percent_done*100));
                         percent_done_message = strcat('Wavelet Transform',{' '},displayed_percent_done,'% Complete (1 of 2)');
                         waitbar(percent_done,wbar,percent_done_message);
+                        
+                        if par_flag
+                            par_marker = par_marker+1;
+                        end
 
                     else
 
@@ -91,18 +109,48 @@ classdef SPOT_DETECT
 
                             IMG = IMG.setCurrFrame(i);
                             curr_frame = im2double(IMG.getCurrFrame());
+                            
+                            if par_flag
+                                OUT(i) = parfeval(@spot_finder_three_dim, 1, curr_frame, wav_thresh, frame_lim, overseg, wav_level);
+                                frame_ref(par_marker) = i;
+                                par_marker = par_marker + 1;
+                            else
 
-                            [spotInfo] = spot_finder_three_dim(curr_frame, wav_thresh, frame_lim, overseg, wav_level);
-                            full_spotInfo{i} = spotInfo;
+                                [spotInfo] = spot_finder_three_dim(curr_frame, wav_thresh, frame_lim, overseg, wav_level);
+                                full_spotInfo{i} = spotInfo;
+                                
+                                % waitbar handling
+                                percent_done = i/num_frames;
+                                displayed_percent_done = num2str(round(percent_done*100));
+                                percent_done_message = strcat('Wavelet Transform',{' '},displayed_percent_done,'% Complete (1 of 2)');
+                                waitbar(percent_done,wbar,percent_done_message);
+                                
+                            end
 
-                            % waitbar handling
-                            percent_done = i/num_frames;
-                            displayed_percent_done = num2str(round(percent_done*100));
-                            percent_done_message = strcat('Wavelet Transform',{' '},displayed_percent_done,'% Complete (1 of 2)');
-                            waitbar(percent_done,wbar,percent_done_message);
+
 
                         end
 
+                    end
+                end
+                
+                if par_flag
+                    
+                    assignin('base','OUT',OUT);
+                    
+                    frame_ref(frame_ref==0) = [];
+                    mrkr2 = 1;
+                    while mrkr2 <= length(frame_ref)
+                        [out_idx, spotInfo] = fetchNext(OUT);
+                        full_spotInfo{frame_ref(out_idx)} = spotInfo;
+                        
+                        % waitbar handling
+                        percent_done = mrkr2/length(frame_ref);
+                        displayed_percent_done = num2str(round(percent_done*100));
+                        percent_done_message = strcat('Wavelet Transform',{' '},displayed_percent_done,'% Complete (1 of 2)');
+                        waitbar(percent_done,wbar,percent_done_message);
+                        
+                        mrkr2 = mrkr2+1;
                     end
                 end
 
@@ -128,7 +176,7 @@ classdef SPOT_DETECT
 
                         IMG = IMG.setCurrFrame(i);
                         curr_frame = im2double(IMG.getCurrFrame());
-                        if i==OVERLAY.frameNo && ~isempty(OVERLAY.spotInfo)
+                        if i==OVERLAY.frameNo && ~isempty(OVERLAY.spotInfo) && ~par_flag
                             % do nothing
                             % waitbar handling
                             percent_done = i/num_frames;
