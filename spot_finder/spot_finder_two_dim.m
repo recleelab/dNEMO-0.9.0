@@ -51,7 +51,12 @@ if overseg == 1
             % if there is a local min, probably should be 2 separate spots
             % (this condition could refined)
             minvals = findpeaks(invintensity);
-            tooclose = 0;
+            if ~isempty(minvals) && minvals(1) < max(intensityprof)*0.9
+                tooclose = 0;
+            else
+                tooclose = 1;
+                minvals = 0;
+            end
         else
             % if centroids are less than 3 pixels apart, probably
             % oversegmentation (and findpeaks won't run)
