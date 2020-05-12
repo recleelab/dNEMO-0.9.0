@@ -1,5 +1,5 @@
 function [Z] = dnemo_dist(W, P)
-%% dist function
+%% dist function, identical to native matlab operation
 % 
 %  INPUT:
 %  . W -- S x R weight matrix

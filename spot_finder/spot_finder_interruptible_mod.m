@@ -1,5 +1,6 @@
 function [spotInfo, interrupt_flag] = spot_finder_interruptible_mod(curr_frame, param_struct, user_threshold)
-%% <placeholder>
+%% main spotfinder function, just interruptible.
+%  see 'spot_finder_three_dim' for full comment on the operation.
 %
 
 % get Z, determines 2D or 3D

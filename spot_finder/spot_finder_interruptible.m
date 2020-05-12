@@ -1,5 +1,6 @@
 function [spotInfo, interrupt_flag] = spot_finder_interruptible(IMG, APP_PARAM, user_threshold)
-%% <placeholder>
+%% main spotfinder function, just interruptible.
+%  see 'spot_finder_three_dim' for full comment on the operation.
 %
 
 % pull the current image

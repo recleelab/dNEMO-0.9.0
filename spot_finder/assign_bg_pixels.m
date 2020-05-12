@@ -1,6 +1,24 @@
 function [BG_VALS,BG_LBLS] = assign_bg_pixels(image,spotInfo,num_pix_off,num_pix_bg)
-%% 
+%% original script for assignment of background values to appropriate signals
 %  
+%  for each set of spot data, dilates signal regions simultaneously, 
+%  makes copy of matrix w/ signal objects removed, and then reassigns
+%  background pixel values to the nearest centroid.
+%
+%  INPUT:
+%  . image - image object
+%  . spotInfo - structure containing spot information for input image
+%  . num_pix_off - number of pixels to dilate offset region, region where 
+%                  pixel values ARE NOT taken
+%  . num_pix_bg - number of pixels to dilate background region, region
+%                 where pixel values ARE taken
+%
+%  OUTPUT:
+%  . BG_VALS - cell array containing background values. array of same size
+%              and ordering as the spotInfo 'SIG_VALS' field
+%  . BG_LBLS - label matrices representing pixels pulled for 'background'
+%              from the original image.
+%
 
 objCoords = spotInfo.objCoords;
 spotMat = spotInfo.spotMat;
