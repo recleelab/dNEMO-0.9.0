@@ -22,3 +22,4 @@ dNEMO uses bioformats to handle image input into the application, and is cited h
 
 Linkert, M., C. T. Rueden, C. Allan, J.-M. Burel, W. Moore, A. Patterson, B. Loranger, J. Moore, C. Neves, D. MacDonald, A. Tarkowska, C. Sticco, E. Hill, M. Rossner, K. W. Eliceiri, and J. R. Swedlow. 2010. Metadata matters: access to image data in the real world. The Journal of Cell Biology 189(5):777.
 
+In order for dNEMO's image class to properly read in images to the interface, the Bioformats Package Java package must also be downloaded, but is too large to include here. Download the 'bioformats_package.jar' file from the OME Downloads page: https://www.openmicroscopy.org/bio-formats/downloads/ and copy it to your local copy of dNEMO's 'bfmatlab' folder.
