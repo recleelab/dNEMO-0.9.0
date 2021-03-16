@@ -798,7 +798,6 @@ classdef SPOT_DETECT
             if bg_flag == 0
                 frame_range = [start_frame, size(curr_pix_arr,2)];
             end
-            
             obj = obj.updateBGInfo(IMG, OVERLAY, frame_range);
             
         end
@@ -825,7 +824,7 @@ classdef SPOT_DETECT
                     
                     IMG = IMG.setCurrFrame(curr_frame_no);
                     curr_frame = im2double(IMG.getCurrFrame());
-                    if i==OVERLAY.frameNo
+                    if curr_frame_no==OVERLAY.frameNo
                         % do nothing
                         % waitbar handling
                         percent_done = i/length(frames);
