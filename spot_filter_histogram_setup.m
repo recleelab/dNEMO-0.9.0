@@ -215,8 +215,20 @@ switch hand.Tag
                 % display call
                 display_call(hand, 1, APP);
                 
-            else
+            elseif new_num <= other_line.XData(1)
                 hand.String = num2str(some_line.XData(1));
+            else
+                some_line.XData = [new_num new_num];
+                APP.hist_ax.XLim(2) = new_num;
+                
+                % pull current overlay
+                curr_overlay = getappdata(APP.MAIN,'OVERLAY');
+                curr_feat_pointer = curr_overlay.spotFeaturePointer;
+                curr_overlay.spotFeatureMax(curr_feat_pointer) = new_num;
+                setappdata(APP.MAIN,'OVERLAY',curr_overlay);
+                
+                % display call
+                display_call(hand, 1, APP);
             end
         else
             hand.String = num2str(some_line.XData(1));
@@ -238,8 +250,20 @@ switch hand.Tag
                 % DISPLAY CALL
                 display_call(hand, 1, APP);
                 
-            else
+            elseif new_num >= some_line.XData(1)
                 hand.String = num2str(some_line.XData(1));
+            else
+                some_line.XData = [new_num new_num];
+                
+                % pull current overlay
+                curr_overlay = getappdata(APP.MAIN,'OVERLAY');
+                curr_feat_pointer = curr_overlay.spotFeaturePointer;
+                curr_overlay.spotFeatureMin(curr_feat_pointer) = new_num;
+                setappdata(APP.MAIN,'OVERLAY',curr_overlay);
+                
+                % DISPLAY CALL
+                display_call(hand, 1, APP);
+                
             end
         else
             hand.String = num2str(some_line.XData(1));
